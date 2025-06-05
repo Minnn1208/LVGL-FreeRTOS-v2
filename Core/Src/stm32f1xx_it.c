@@ -26,9 +26,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN TD */
-uint8_t  g_usart_rx_buf[USART_REC_LEN];  /* 接收缓冲,最大USART_REC_LEN个字节.末字节为换行符 */
-uint16_t g_usart_rx_sta;                 /* 接收状态标记 */
-uint8_t g_rx_buffer[RXBUFFERSIZE];       /* HAL库USART接收Buffer */
+
 /* USER CODE END TD */
 
 /* Private define ------------------------------------------------------------*/

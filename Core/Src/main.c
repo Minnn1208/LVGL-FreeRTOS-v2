@@ -25,6 +25,10 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "delay.h"
+#include "lcd.h"
+#include "key.h"
+#include "touch.h"
 
 /* USER CODE END Includes */
 
@@ -98,7 +102,7 @@ int main(void)
   lcd_init();
   lcd_clear(WHITE);
   key_init();
-
+  tp_dev.init();
 
   xTaskCreate((TaskFunction_t)LCD_Task, "LCD_Task", 128, NULL, osPriorityNormal, NULL);
   xTaskCreate((TaskFunction_t)LED0_Task, "LED0_Task", 128, NULL, osPriorityNormal, NULL);

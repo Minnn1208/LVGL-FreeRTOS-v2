@@ -145,6 +145,18 @@
               }
             ],
             "folders": []
+          },
+          {
+            "name": "I2C",
+            "files": [
+              {
+                "path": "Drivers/I2C/myiic.c"
+              },
+              {
+                "path": "Drivers/I2C/myiic.h"
+              }
+            ],
+            "folders": []
           }
         ]
       },
@@ -203,6 +215,21 @@
           },
           {
             "path": "Hardware/KEY/key.c"
+          },
+          {
+            "path": "Hardware/Touch/ctiic.c"
+          },
+          {
+            "path": "Hardware/Touch/ft5206.c"
+          },
+          {
+            "path": "Hardware/Touch/gt9xxx.c"
+          },
+          {
+            "path": "Hardware/Touch/touch.c"
+          },
+          {
+            "path": "Hardware/24CXX/24cxx.c"
           }
         ],
         "folders": []
@@ -372,7 +399,10 @@
           "MDK-ARM/RTE/_LVGL-FreeRTOS-v2",
           "Drivers/Delay",
           "Hardware/LCD",
-          "Hardware/KEY"
+          "Hardware/KEY",
+          "Hardware/Touch",
+          "Hardware/24CXX",
+          "Drivers/I2C"
         ],
         "libList": [],
         "defineList": [

@@ -13,7 +13,8 @@
             "stm32f1xx_hal.h": "c",
             "stdint.h": "c",
             "lcd.h": "c",
-            "lcdfont.h": "c"
+            "lcdfont.h": "c",
+            "gpio.h": "c"
         }
     },
     "extensions": {}
