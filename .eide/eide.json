@@ -197,18 +197,12 @@
       },
       {
         "name": "Hardware",
-        "files": [],
-        "folders": [
+        "files": [
           {
-            "name": "LCD",
-            "files": [
-              {
-                "path": "Hardware/LCD/lcd.c"
-              }
-            ],
-            "folders": []
+            "path": "Hardware/LCD/lcd.c"
           }
-        ]
+        ],
+        "folders": []
       }
     ]
   },
