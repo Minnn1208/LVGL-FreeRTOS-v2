@@ -197,18 +197,15 @@
       },
       {
         "name": "Hardware",
-        "files": [],
-        "folders": [
+        "files": [
           {
-            "name": "LCD",
-            "files": [
-              {
-                "path": "Hardware/LCD/lcd.c"
-              }
-            ],
-            "folders": []
+            "path": "Hardware/LCD/lcd.c"
+          },
+          {
+            "path": "Hardware/KEY/key.c"
           }
-        ]
+        ],
+        "folders": []
       }
     ]
   },
@@ -374,7 +371,8 @@
           "Drivers/CMSIS/Include",
           "MDK-ARM/RTE/_LVGL-FreeRTOS-v2",
           "Drivers/Delay",
-          "Hardware/LCD"
+          "Hardware/LCD",
+          "Hardware/KEY"
         ],
         "libList": [],
         "defineList": [

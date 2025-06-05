@@ -97,6 +97,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   lcd_init();
   lcd_clear(WHITE);
+  key_init();
 
 
   xTaskCreate((TaskFunction_t)LCD_Task, "LCD_Task", 128, NULL, osPriorityNormal, NULL);
@@ -172,7 +173,6 @@ void LED0_Task(void)
     {
         /* code */
         HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
-        delay_ms(500);
         vTaskDelay(300);
     }
 }
@@ -183,7 +183,6 @@ void LED1_Task(void)
     {
         /* code */
         HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
-        delay_ms(500);
         vTaskDelay(300);
     }
 }
@@ -196,7 +195,7 @@ void LCD_Task(void)
     lcd_show_string(0, 0, 100, 100, 16,"LCD_TEST", BLUE);
     delay_ms(500);
     lcd_clear(WHITE);
-    vTaskDelay(300);
+    vTaskDelay(500);
   }
   
 }
