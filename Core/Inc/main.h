@@ -34,6 +34,9 @@ extern "C" {
 #include "stdint.h"
 #include "delay.h"
 #include "lcd.h"
+#include "lvgl.h"
+#include "lv_port_disp.h"
+#include "lv_port_indev.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

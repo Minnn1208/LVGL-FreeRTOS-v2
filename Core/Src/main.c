@@ -60,188 +60,12 @@ void MX_FREERTOS_Init(void);
 void LED0_Task(void);
 void LED1_Task(void);
 void LCD_Task(void);
+void LVGL_Task(void);
+void btn_event_handler(lv_event_t * e);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void load_draw_dialog(void)
-{
-    lcd_clear(WHITE);                                                /* ÇåÆÁ */
-    lcd_show_string(lcddev.width - 24, 0, 200, 16, 16, "RST", BLUE); /* ÏÔÊ¾ÇåÆÁÇøÓò */
-}
-
-/**
- * @brief       »­´ÖÏß
- * @param       x1,y1: Æðµã×ø±ê
- * @param       x2,y2: ÖÕµã×ø±ê
- * @param       size : ÏßÌõ´ÖÏ¸³Ì¶È
- * @param       color: ÏßµÄÑÕÉ«
- * @retval      ÎÞ
- */
-void lcd_draw_bline(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t size, uint16_t color)
-{
-    uint16_t t;
-    int xerr = 0, yerr = 0, delta_x, delta_y, distance;
-    int incx, incy, row, col;
-
-    if (x1 < size || x2 < size || y1 < size || y2 < size)
-        return;
-
-    delta_x = x2 - x1; /* ¼ÆËã×ø±êÔöÁ¿ */
-    delta_y = y2 - y1;
-    row = x1;
-    col = y1;
-
-    if (delta_x > 0)
-    {
-        incx = 1; /* ÉèÖÃµ¥²½·½Ïò */
-    }
-    else if (delta_x == 0)
-    {
-        incx = 0; /* ´¹Ö±Ïß */
-    }
-    else
-    {
-        incx = -1;
-        delta_x = -delta_x;
-    }
-
-    if (delta_y > 0)
-    {
-        incy = 1;
-    }
-    else if (delta_y == 0)
-    {
-        incy = 0; /* Ë®Æ½Ïß */
-    }
-    else
-    {
-        incy = -1;
-        delta_y = -delta_y;
-    }
-
-    if (delta_x > delta_y)
-        distance = delta_x; /* Ñ¡È¡»ù±¾ÔöÁ¿×ø±êÖá */
-    else
-        distance = delta_y;
-
-    for (t = 0; t <= distance + 1; t++) /* »­ÏßÊä³ö */
-    {
-        lcd_fill_circle(row, col, size, color); /* »­µã */
-        xerr += delta_x;
-        yerr += delta_y;
-
-        if (xerr > distance)
-        {
-            xerr -= distance;
-            row += incx;
-        }
-
-        if (yerr > distance)
-        {
-            yerr -= distance;
-            col += incy;
-        }
-    }
-}
-
-/**
- * @brief       µç×è´¥ÃþÆÁ²âÊÔº¯Êý
- * @param       ÎÞ
- * @retval      ÎÞ
- */
-void rtp_test(void)
-{
-    uint8_t key;
-
-    while (1)
-    {
-        key = key_scan(0);
-        tp_dev.scan(0);
-
-        if (tp_dev.sta & TP_PRES_DOWN)  /* ´¥ÃþÆÁ±»°´ÏÂ */
-        {
-            if (tp_dev.x[0] < lcddev.width && tp_dev.y[0] < lcddev.height)
-            {
-                if (tp_dev.x[0] > (lcddev.width - 24) && tp_dev.y[0] < 16)
-                {
-                    load_draw_dialog(); /* Çå³ý */
-                }
-                else 
-                {
-                    tp_draw_big_point(tp_dev.x[0], tp_dev.y[0], RED);   /* »­µã */
-                }
-            }
-        }
-        else 
-        {
-            delay_ms(10);       /* Ã»ÓÐ°´¼ü°´ÏÂµÄÊ±ºò */
-        }
-        
-        if (key == KEY0_PRES)   /* KEY0°´ÏÂ,ÔòÖ´ÐÐÐ£×¼³ÌÐò */
-        {
-            lcd_clear(WHITE);   /* ÇåÆÁ */
-            tp_adjust();        /* ÆÁÄ»Ð£×¼ */
-            tp_save_adjust_data();
-            load_draw_dialog();
-        }
-
-
-    }
-}
-
-/* 10¸ö´¥¿ØµãµÄÑÕÉ«(µçÈÝ´¥ÃþÆÁÓÃ) */
-const uint16_t POINT_COLOR_TBL[10] = {RED, GREEN, BLUE, BROWN, YELLOW, MAGENTA, CYAN, LIGHTBLUE, BRRED, GRAY};
-
-/**
- * @brief       µçÈÝ´¥ÃþÆÁ²âÊÔº¯Êý
- * @param       ÎÞ
- * @retval      ÎÞ
- */
-void ctp_test(void)
-{
-    uint8_t t = 0;
-    uint8_t i = 0;
-    uint16_t lastpos[10][2];        /* ×îºóÒ»´ÎµÄÊý¾Ý */
-    uint8_t maxp = 5;
-
-    if (lcddev.id == 0X1018)maxp = 10;
-
-    while (1)
-    {
-        tp_dev.scan(0);
-
-        for (t = 0; t < maxp; t++)
-        {
-            if ((tp_dev.sta) & (1 << t))
-            {
-                if (tp_dev.x[t] < lcddev.width && tp_dev.y[t] < lcddev.height)  /* ×ø±êÔÚÆÁÄ»·¶Î§ÄÚ */
-                {
-                    if (lastpos[t][0] == 0XFFFF)
-                    {
-                        lastpos[t][0] = tp_dev.x[t];
-                        lastpos[t][1] = tp_dev.y[t];
-                    }
-
-                    lcd_draw_bline(lastpos[t][0], lastpos[t][1], tp_dev.x[t], tp_dev.y[t], 2, POINT_COLOR_TBL[t]); /* »­Ïß */
-                    lastpos[t][0] = tp_dev.x[t];
-                    lastpos[t][1] = tp_dev.y[t];
-
-                    if (tp_dev.x[t] > (lcddev.width - 24) && tp_dev.y[t] < 20)
-                    {
-                        load_draw_dialog();/* Çå³ý */
-                    }
-                }
-            }
-            else 
-            {
-                lastpos[t][0] = 0XFFFF;
-            }
-        }
-
-        delay_ms(5);
-    }
-}
 
 /* USER CODE END 0 */
 
@@ -277,29 +101,14 @@ int main(void)
   MX_FSMC_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  lcd_init();
-  lcd_clear(WHITE);
   key_init();
-  tp_dev.init();
+  lv_init(); // 初始化LVGL库
+  lv_port_disp_init();
+  lv_port_indev_init();
+  
 
-  lcd_show_string(30, 50, 200, 16, 16, "STM32", RED);
-  lcd_show_string(30, 70, 200, 16, 16, "TOUCH TEST", RED);
-  lcd_show_string(30, 90, 200, 16, 16, "ATOM@ALIENTEK", RED);
 
-  if (tp_dev.touchtype != 0XFF)
-  {
-    lcd_show_string(30, 110, 200, 16, 16, "Press KEY0 to Adjust", RED); /* µç×èÆÁ²ÅÏÔÊ¾ */
-  }
-
-  delay_ms(1500);
-  load_draw_dialog();
-
-  if (tp_dev.touchtype & 0X80) {
-    xTaskCreate((TaskFunction_t)ctp_test, "ctp_test", 256, NULL, osPriorityNormal, NULL);
-  } else {
-      xTaskCreate((TaskFunction_t)rtp_test, "rtp_test", 256, NULL, osPriorityNormal, NULL);
-  }
-  xTaskCreate((TaskFunction_t)LED0_Task, "LED0_Task", 128, NULL, osPriorityNormal, NULL);
+  xTaskCreate((TaskFunction_t)LVGL_Task, "LVGL_Task", 512, NULL, osPriorityNormal, NULL);
   xTaskCreate((TaskFunction_t)LED1_Task, "LED1_Task", 128, NULL, osPriorityNormal, NULL);
   /* USER CODE END 2 */
 
@@ -396,6 +205,34 @@ void LCD_Task(void)
     vTaskDelay(500);
   }
   
+}
+
+void btn_event_handler(lv_event_t * e)
+{
+  lv_event_code_t code = lv_event_get_code(e);
+  if(code == LV_EVENT_CLICKED) 
+  {
+    // 反转 LED0 状态
+    HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
+  }
+}
+
+void LVGL_Task(void)
+{
+   // 创建按钮
+  lv_obj_t* btn = lv_btn_create(lv_scr_act());
+  lv_obj_align(btn, LV_ALIGN_CENTER, 0, 0);
+
+  lv_obj_t* label = lv_label_create(btn);
+  lv_label_set_text(label, "Toggle LED");
+
+  lv_obj_add_event_cb(btn, btn_event_handler, LV_EVENT_ALL, NULL);
+  
+  while (1)
+  {
+    lv_task_handler();
+    vTaskDelay(pdMS_TO_TICKS(50)); // 避免 CPU 占满
+  }
 }
 /* USER CODE END 4 */
 

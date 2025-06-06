@@ -1168,6 +1168,26 @@ void lcd_show_string(uint16_t x, uint16_t y, uint16_t width, uint16_t height, ui
     }
 }
 
+/**
+ * @brief       LCD加速绘制函数
+ * @param       (sx,sy),(ex,ey):填充矩形对角坐标,区域大小为:(ex - sx + 1) * (ey - sy + 1)
+ * @param       color:要填充的颜色
+ * @retval      无
+ */
+void lcd_draw_fast_rgb_color(int16_t sx, int16_t sy,int16_t ex, int16_t ey, uint16_t *color)
+{
+    uint16_t w = ex-sx+1;
+    uint16_t h = ey-sy+1;
+
+    lcd_set_window(sx, sy, w, h);
+    uint32_t draw_size = w * h;
+    lcd_write_ram_prepare();
+
+    for(uint32_t i = 0; i < draw_size; i++)
+    {
+        lcd_wr_data(color[i]);
+    }
+}
 
 
 
