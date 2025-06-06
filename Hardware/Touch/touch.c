@@ -514,14 +514,12 @@ void tp_adjust(void)
 uint8_t tp_init(void)
 {
     GPIO_InitTypeDef gpio_init_struct;
-    uint8_t temp = 0;
-
+    
     tp_dev.touchtype = 0;                   /* 默认设置(电阻屏 & 竖屏) */
     tp_dev.touchtype |= lcddev.dir & 0X01;  /* 根据LCD判定是横屏还是竖屏 */
 
     if (lcddev.id == 0x7796)                /* 3.5寸屏有两种，一种屏幕ID为0x5510带电阻触摸屏，一种屏幕ID为0x7796带GT型号的电容触摸屏 */
     {
-        printf("GT9xxx touch panel detected!\r\n");
         if (gt9xxx_init() == 0)             /* 初始化GT系列触摸屏成功,即当前3.5寸屏为电容触摸屏 */
         {
             tp_dev.scan = gt9xxx_scan;      /* 扫描函数指向GT9147触摸屏扫描 */
@@ -532,7 +530,6 @@ uint8_t tp_init(void)
 
     if (lcddev.id == 0X5510 || lcddev.id == 0X9806 || lcddev.id == 0X4342 || lcddev.id == 0X4384 || lcddev.id == 0X1018)  /* 电容触摸屏,4.3寸/10.1寸屏 */
     {
-        printf("Resistive touch panel detected!\r\n");
         gt9xxx_init();
         tp_dev.scan = gt9xxx_scan;      /* 扫描函数指向GT9147触摸屏扫描 */
         tp_dev.touchtype |= 0X80;       /* 电容屏 */
@@ -540,7 +537,6 @@ uint8_t tp_init(void)
     }
     else if (lcddev.id == 0X1963 || lcddev.id == 0X7084 || lcddev.id == 0X7016)     /* SSD1963 7寸屏或者 7寸800*480/1024*600 RGB屏 */
     {
-        printf("SSD1963 touch panel detected!\r\n");
         if (!ft5206_init())             /* 触摸IC是FT系列的就执行ft5206_init函数以及使用ft5206_scan扫描函数 */
         {
             tp_dev.scan = ft5206_scan;  /* 扫描函数指向FT5206触摸屏扫描 */
@@ -555,7 +551,6 @@ uint8_t tp_init(void)
     }
     else
     {
-        printf("Other touch panel!\r\n");
         T_PEN_GPIO_CLK_ENABLE();    /* T_PEN脚时钟使能 */
         T_CS_GPIO_CLK_ENABLE();     /* T_CS脚时钟使能 */
         T_MISO_GPIO_CLK_ENABLE();   /* T_MISO脚时钟使能 */
@@ -586,21 +581,20 @@ uint8_t tp_init(void)
         tp_read_xy(&tp_dev.x[0], &tp_dev.y[0]); /* 第一次读取初始化 */
         at24cxx_init();         /* 初始化24CXX */
 
-        temp = tp_get_adjust_data();
-        if (temp)
+        if (tp_get_adjust_data())
         {
-            printf("tp_get_adjust_data() returns %d\n", temp);
+            printf("tp_get_adjust_data() returns 1");
             return 0;           /* 已经校准 */
         }
         else                    /* 未校准? */
         {
-            printf("tp_get_adjust_data() returns %d\n", temp);
+            printf("tp_get_adjust_data() returns 0");
             lcd_clear(WHITE);   /* 清屏 */
             tp_adjust();        /* 屏幕校准 */
             tp_save_adjust_data();
         }
 
-        //tp_get_adjust_data();
+        tp_get_adjust_data();
     }
 
     return 1;

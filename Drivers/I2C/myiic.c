@@ -23,6 +23,7 @@
  */
 
 #include "myiic.h"
+#include "delay.h"
 
 /**
  * @brief       初始化IIC
@@ -37,7 +38,7 @@ void iic_init(void)
     IIC_SDA_GPIO_CLK_ENABLE();  /* SDA引脚时钟使能 */
 
     gpio_init_struct.Pin = IIC_SCL_GPIO_PIN;
-    gpio_init_struct.Mode = GPIO_MODE_OUTPUT_PP;        /* 推挽输出 */
+    gpio_init_struct.Mode = GPIO_MODE_OUTPUT_OD;        /* 开漏输出 */
     gpio_init_struct.Pull = GPIO_PULLUP;                /* 上拉 */
     gpio_init_struct.Speed = GPIO_SPEED_FREQ_HIGH;      /* 高速 */
     HAL_GPIO_Init(IIC_SCL_GPIO_PORT, &gpio_init_struct);/* SCL */
