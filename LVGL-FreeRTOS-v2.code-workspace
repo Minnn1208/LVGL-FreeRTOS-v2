@@ -14,7 +14,10 @@
             "stdint.h": "c",
             "lcd.h": "c",
             "lcdfont.h": "c",
-            "gpio.h": "c"
+            "gpio.h": "c",
+            "delay.h": "c",
+            "key.h": "c",
+            "fsmc.h": "c"
         }
     },
     "extensions": {}

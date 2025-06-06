@@ -199,6 +199,11 @@
               }
             ],
             "folders": []
+          },
+          {
+            "name": "LVGL",
+            "files": [],
+            "folders": []
           }
         ]
       },

@@ -514,7 +514,8 @@ void tp_adjust(void)
 uint8_t tp_init(void)
 {
     GPIO_InitTypeDef gpio_init_struct;
-    
+    uint8_t temp = 0;
+
     tp_dev.touchtype = 0;                   /* 默认设置(电阻屏 & 竖屏) */
     tp_dev.touchtype |= lcddev.dir & 0X01;  /* 根据LCD判定是横屏还是竖屏 */
 
@@ -585,18 +586,21 @@ uint8_t tp_init(void)
         tp_read_xy(&tp_dev.x[0], &tp_dev.y[0]); /* 第一次读取初始化 */
         at24cxx_init();         /* 初始化24CXX */
 
-        if (tp_get_adjust_data())
+        temp = tp_get_adjust_data();
+        if (temp)
         {
+            printf("tp_get_adjust_data() returns %d\n", temp);
             return 0;           /* 已经校准 */
         }
         else                    /* 未校准? */
         {
+            printf("tp_get_adjust_data() returns %d\n", temp);
             lcd_clear(WHITE);   /* 清屏 */
             tp_adjust();        /* 屏幕校准 */
             tp_save_adjust_data();
         }
 
-        tp_get_adjust_data();
+        //tp_get_adjust_data();
     }
 
     return 1;
